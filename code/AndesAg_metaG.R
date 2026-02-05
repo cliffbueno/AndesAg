@@ -305,11 +305,18 @@ input_filt_rare$map_loaded <- input_filt_rare$map_loaded %>%
                                        "+MP1+Basalt"))) %>%
   mutate(Treatment = case_match(Treatment,
                                 "Control" ~ "UTC",
-                                "+Basalt" ~ "UTC+B",
+                                "+Basalt" ~ "B",
                                 "+MP1" ~ "MP1",
                                 "+MP1+Basalt" ~ "MP1+B")) %>%
   mutate(Treatment = factor(Treatment,
-                            levels = c("UTC", "MP1", "UTC+B", "MP1+B"))) %>%
+                            levels = c("UTC", "MP1", "B", "MP1+B"))) %>%
+  # mutate(Treatment = case_match(Treatment,
+  #                               "Control" ~ "UTC",
+  #                               "+Basalt" ~ "UTC+B",
+  #                               "+MP1" ~ "MP1",
+  #                               "+MP1+Basalt" ~ "MP1+B")) %>%
+  # mutate(Treatment = factor(Treatment,
+  #                           levels = c("UTC", "MP1", "UTC+B", "MP1+B"))) %>%
   mutate(Depth = as.factor(Depth)) %>%
   mutate(TrtDep = factor(paste(Treatment, Depth, sep = "_"),
                           levels = c("Control_10", "Control_20", "Control_30",
@@ -336,11 +343,18 @@ soil <- read.csv("data/andes_cs5_compiled_soil_data.csv") %>%
                                        "+MP1+Basalt"))) %>%
   mutate(Treatment = case_match(Treatment,
                                 "Control" ~ "UTC",
-                                "+Basalt" ~ "UTC+B",
+                                "+Basalt" ~ "B",
                                 "+MP1" ~ "MP1",
                                 "+MP1+Basalt" ~ "MP1+B")) %>%
   mutate(Treatment = factor(Treatment,
-                            levels = c("UTC", "MP1", "UTC+B", "MP1+B"))) %>%
+                            levels = c("UTC", "MP1", "B", "MP1+B"))) %>%
+  # mutate(Treatment = case_match(Treatment,
+  #                               "Control" ~ "UTC",
+  #                               "+Basalt" ~ "UTC+B",
+  #                               "+MP1" ~ "MP1",
+  #                               "+MP1+Basalt" ~ "MP1+B")) %>%
+  # mutate(Treatment = factor(Treatment,
+  #                           levels = c("UTC", "MP1", "UTC+B", "MP1+B"))) %>%
   mutate(sampleID = paste(Group, Column, Increment, sep = ".")) %>%
   dplyr::select(-Treatment, -Condition, -Increment, -Column, -Comb, -Group) %>%
   dplyr::select(sampleID, everything())
@@ -649,14 +663,14 @@ g5 <- ggplot(input_filt_rare$map_loaded, aes(Axis01, Axis02)) +
   theme(legend.position = "right",
         axis.title = element_text(face = "bold", size = 12), 
         axis.text = element_text(size = 10),
-        plot.margin = margin(0, 40, 0, 0),
+        plot.margin = margin(0, 40, 0, 2),
         panel.grid = element_blank())
 g5
 
 plot.with.inset <-
   ggdraw() +
   draw_plot(g5) +
-  draw_plot(g4, x = 0.75, y = 0.1, width = 0.3, height = 0.3)
+  draw_plot(g4, x = 0.76, y = 0.1, width = 0.3, height = 0.3)
 plot.with.inset
 pdf("FinalFigs/Figure6.pdf", width = 7, height = 5)
 plot.with.inset
@@ -716,7 +730,7 @@ bars_phyla <- bars_phyla %>%
                         levels = c("Other", rev(top_phyla$taxon))))
 pdf("InitialFigs/Taxa_Phyla.pdf", width = 8, height = 6)
 ggplot(bars_phyla, aes(group_by, mean_value, fill = taxon)) +
-  geom_bar(stat = "identity", colour = NA, size = 0.25) +
+  geom_bar(stat = "identity", colour = NA, linewidth = 0.25) +
   labs(x = "Sample", y = "Relative abundance", fill = "Phylum") +
   scale_fill_manual(values = c("grey90", brewer.pal(12, "Paired")[12:1])) +
   scale_y_continuous(expand = c(0.01, 0.01)) + 
@@ -795,7 +809,7 @@ bars_genus <- bars_genus %>%
                         levels = c("Other", rev(top_genus$taxon))))
 pdf("InitialFigs/Taxa_Genus.pdf", width = 8, height = 6)
 ggplot(bars_genus, aes(group_by, mean_value, fill = taxon)) +
-  geom_bar(stat = "identity", colour = NA, size = 0.25) +
+  geom_bar(stat = "identity", colour = NA, linewidth = 0.25) +
   labs(x = "Sample", y = "Relative abundance", fill = "Genus") +
   scale_fill_manual(values = c("grey90", brewer.pal(12, "Paired")[12:1])) +
   scale_y_continuous(expand = c(0.01, 0.01)) + 
@@ -959,7 +973,7 @@ nb.cols <- 22
 mycolors <- colorRampPalette(brewer.pal(12, "Paired"))(nb.cols)
 pdf("InitialFigs/Taxa_Weathering.pdf", width = 8, height = 6)
 ggplot(bars_genus, aes(group_by, mean_value, fill = taxon)) +
-  geom_bar(stat = "identity", colour = NA, size = 0.25) +
+  geom_bar(stat = "identity", colour = NA, linewidth = 0.25) +
   labs(x = "Sample", y = "Relative abundance", fill = "Genus") +
   scale_fill_manual(values = mycolors) +
   scale_y_continuous(expand = c(0.001, 0.001)) + 
@@ -1084,7 +1098,7 @@ g1 <- ggplot(eta_sq_m1, aes(x = "", y = value, fill = group)) +
   geom_text_repel(data = eta_sq_m1,
                   aes(y = ypos, label = group), color = "black", size = 1.5,
                   box.padding = 0.01) +
-  scale_fill_manual(values = c("#31688EFF", "#FDE725FF", "#35B779FF", "grey70")) +
+  scale_fill_manual(values = c("#35B779FF", "#FDE725FF", "#31688EFF", "grey70")) +
   theme_void() + 
   theme(legend.position = "none")
 g1
@@ -1103,7 +1117,7 @@ g2 <- ggplot(eta_sq_m2, aes(x = "", y = value, fill = group)) +
   geom_text_repel(data = eta_sq_m2,
                   aes(y = ypos, label = group), color = "black", size = 1.5,
                   box.padding = 0.01) +
-  scale_fill_manual(values = c("#31688EFF", "#FDE725FF", "#35B779FF", "grey70")) +
+  scale_fill_manual(values = c("#35B779FF", "#FDE725FF", "#31688EFF", "grey70")) +
   theme_void() + 
   theme(legend.position = "none")
 g2
@@ -1225,6 +1239,7 @@ g4 <- ggplot(eta_sq_m3, aes(x = "", y = value, fill = group)) +
   scale_fill_manual(values = c("#35B779FF", "#31688EFF", "grey70")) +
   theme_void() + 
   theme(legend.position = "none")
+g4
 micro.hulls <- ddply(top$map_loaded, c("Treatment"), find_hull)
 g5 <- ggplot(top$map_loaded, aes(Axis01, Axis02)) +
   geom_polygon(data = micro.hulls, aes(colour = Treatment, fill = Treatment),
@@ -1336,6 +1351,37 @@ pdf("InitialFigs/Phylum_Barplot_10.pdf", width = 8, height = 6)
 phyplot
 dev.off()
 png("InitialFigs/Phylum_Barplot_10.png", width = 8, height = 6, units = "in", res = 300)
+phyplot
+dev.off()
+
+# Make another one just with UTC and MP1
+bars_phyla_sub <- bars_phyla %>%
+  filter(Treatment %in% c("UTC", "MP1"))
+phyplot <- ggplot(bars_phyla_sub, aes(group_by, mean_value, fill = taxon)) +
+  geom_bar(stat = "identity", colour = NA, linewidth = 0.25) +
+  labs(x = "Sample", y = "Relative abundance", fill = "Phylum") +
+  scale_fill_manual(values = c("grey75", "grey90", brewer.pal(12, "Paired")[12:1])) +
+  scale_y_continuous(expand = c(0.01, 0.01)) + 
+  facet_grid(~ Treatment, space = "free", scales = "free_x") +
+  theme_classic() +
+  theme(axis.title.y = element_text(face = "bold", size = 12),
+        axis.title.x = element_blank(),
+        axis.text.y = element_text(size = 10),
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        axis.line.x = element_blank(),
+        axis.line.y = element_blank(),
+        strip.text = element_text(size = 7),
+        strip.background = element_rect(linewidth = 0.5),
+        legend.position = "right",
+        legend.margin = margin(0, 0, 0, 0, unit = "pt"),
+        legend.box.margin = margin(0, 0, 0, 0, unit = "pt"),
+        legend.key.size = unit(0.4, "cm"),
+        panel.spacing.x = unit(c(0.2), "lines"))
+pdf("InitialFigs/Phylum_Barplot_UTC_MP1_10cm.pdf", width = 8, height = 6)
+phyplot
+dev.off()
+png("InitialFigs/Phylum_Barplot_UTC_MP1_10cm.png", width = 8, height = 6, units = "in", res = 300)
 phyplot
 dev.off()
 
@@ -1462,7 +1508,6 @@ g4 <- ggplot(eta_sq_m3, aes(x = "", y = value, fill = group)) +
   theme_void() + 
   theme(legend.position = "none")
 g4
-
 micro.hulls <- ddply(top$map_loaded, c("Treatment"), find_hull)
 g5 <- ggplot(top$map_loaded, aes(Axis01, Axis02)) +
   geom_polygon(data = micro.hulls, aes(colour = Treatment, fill = Treatment),
@@ -1593,20 +1638,21 @@ g4 <- ggplot(eta_sq_m3, aes(x = "", y = value, fill = group)) +
   scale_fill_manual(values = c("#35B779FF", "#31688EFF", "grey70")) +
   theme_void() + 
   theme(legend.position = "none")
+g4
 micro.hulls <- ddply(mid$map_loaded, c("Treatment"), find_hull)
-g5 <- ggplot(mid$map_loaded, aes(Axis01, Axis02)) +
+g5 <- ggplot(mid$map_loaded, aes(Axis01, -Axis02)) +
   geom_polygon(data = micro.hulls, aes(colour = Treatment, fill = Treatment),
                alpha = 0.1, show.legend = F, linewidth = NA) +
   geom_point(size = 3, alpha = 1, shape = 24, aes(fill = Treatment)) +
-  geom_point(data = centroids, aes(PCoA1, PCoA2, fill = Treatment),
+  geom_point(data = centroids, aes(PCoA1, -PCoA2, fill = Treatment),
              size = 5, shape = 23, stroke = 1) +
   geom_segment(data = vec.df,
-               aes(x = 0, xend = Dim1, y = 0, yend = Dim2),
+               aes(x = 0, xend = Dim1, y = 0, yend = -Dim2),
                arrow = arrow(length = unit(0.35, "cm")),
                colour = "gray", alpha = 0.6,
                inherit.aes = FALSE) +
   geom_text_repel(data = vec.df,
-                  aes(x = Dim1, y = Dim2, label = shortnames),
+                  aes(x = Dim1, y = -Dim2, label = shortnames),
                   size = 3, color = "red",
                   box.padding = 0.1,
                   min.segment.length = 1,
@@ -1725,20 +1771,21 @@ g4 <- ggplot(eta_sq_m3, aes(x = "", y = value, fill = group)) +
   scale_fill_manual(values = c("#35B779FF", "#FDE725FF", "#31688EFF", "grey70")) +
   theme_void() + 
   theme(legend.position = "none")
+g4
 micro.hulls <- ddply(bot$map_loaded, c("Treatment"), find_hull)
-g5 <- ggplot(bot$map_loaded, aes(Axis01, Axis02)) +
+g5 <- ggplot(bot$map_loaded, aes(-Axis01, Axis02)) +
   geom_polygon(data = micro.hulls, aes(colour = Treatment, fill = Treatment),
                alpha = 0.1, show.legend = F, linewidth = NA) +
   geom_point(size = 3, alpha = 1, shape = 22, aes(fill = Treatment)) +
-  geom_point(data = centroids, aes(PCoA1, PCoA2, fill = Treatment),
+  geom_point(data = centroids, aes(-PCoA1, PCoA2, fill = Treatment),
              size = 5, shape = 23, stroke = 1) +
   geom_segment(data = vec.df,
-               aes(x = 0, xend = Dim1, y = 0, yend = Dim2),
+               aes(x = 0, xend = -Dim1, y = 0, yend = Dim2),
                arrow = arrow(length = unit(0.35, "cm")),
                colour = "gray", alpha = 0.6,
                inherit.aes = FALSE) +
   geom_text_repel(data = vec.df,
-                  aes(x = Dim1, y = Dim2, label = shortnames),
+                  aes(x = -Dim1, y = Dim2, label = shortnames),
                   size = 3, color = "red",
                   box.padding = 0.1,
                   min.segment.length = 1,
@@ -1777,12 +1824,12 @@ dev.off()
 
 
 # Combine the 3 depths (Figure 7)
-pdf("InitialFigs/Figure7.pdf", width = 10, height = 4)
+pdf("FinalFigs/Figure7.pdf", width = 10, height = 4)
 plot_grid(plot.with.inset.10, plot.with.inset.20, plot.with.inset.30, leg,
           ncol = 4,
           rel_widths = c(0.3, 0.3, 0.3, 0.1))
 dev.off()
-png("InitialFigs/Figure7.png", width = 10, height = 4, units = "in", res = 300)
+png("FinalFigs/Figure7.png", width = 10, height = 4, units = "in", res = 300)
 plot_grid(plot.with.inset.10, plot.with.inset.20, plot.with.inset.30, leg,
           ncol = 4,
           rel_widths = c(0.3, 0.3, 0.3, 0.1))
@@ -1869,6 +1916,8 @@ pheatmap(simper_mat,
 dev.off()
 dev.set(dev.next())
 dev.set(dev.next())
+
+
 
 # ANCOMBC (use input_filt, BC for small sample size)
 input_filt$map_loaded$Treatment <- factor(input_filt$map_loaded$Treatment,
@@ -2620,7 +2669,6 @@ dev.off()
 dev.set(dev.next())
 dev.set(dev.next())
 
-
 d_sort$Depth <- as.factor(d_sort$Depth)
 mp1 <- as.data.frame(t(sylph_strains_70)) %>%
   dplyr::select(`Bacillus MP1`) %>%
@@ -2665,7 +2713,14 @@ colSums(sylph_strains_70)
 qPCR <- read_xlsx("data/phili, SYBR Green, 08-13-2025, 07Hr 47Min - Text Report.xlsx",
                   sheet = 2) %>%
   mutate(Treatment = factor(Treatment,
-                            levels = c("UTC", "MP1", "UTC+B", "MP1+B")))
+                            levels = c("UTC", "MP1", "UTC+B", "MP1+B"))) %>%
+  mutate(Treatment = case_match(Treatment,
+                                "UTC" ~ "UTC",
+                                "UTC+B" ~ "B",
+                                "MP1" ~ "MP1",
+                                "MP1+B" ~ "MP1+B")) %>%
+  mutate(Treatment = factor(Treatment,
+                            levels = c("UTC", "MP1", "B", "MP1+B")))
 mp1.qPCR <- ggplot(qPCR, aes(Treatment, CFU)) +
   geom_boxplot(outliers = F, show.legend = F, aes(colour = Treatment)) +
   geom_jitter(size = 3, alpha = 1, width = 0.2, height = 0, 
